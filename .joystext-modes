@@ -1,4 +1,6 @@
-mode: 1
+# A mode is a set of key bindings
+# Name it with single quotes
+mode: 'text'
 
 # This line is a comment.
 
@@ -31,25 +33,17 @@ remap(S2) {
   .F1: "bla"
 }
 
-mode:2
+# Here we start defining another mode called 'macros'
+mode: 'macros'
 
 F1|F2|A1+A2:y
 
-F1|F2|
-  A1+A2
-
-A1+A2|A3+A4:y
-
-A1+A2|
-  A3+A4
+# the plus sign takes precedence in the evaluation
+A1+A2|A3+A4:x
 
 A1|A2+F4|A3:v
-.A1|A2+F4|.A3:f
 
-S1+S2+
-  A1:a
-  A2:b
-  A1+A2:c
+.A1|A2+F4|.A3:f
 
 >A1:click_scroll # trigger of type 3 (direct without repetition)
 <A1:unclick_scroll # trigger of type 4 (single release)
