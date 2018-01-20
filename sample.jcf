@@ -202,8 +202,8 @@ remap(S3){
   .A4:scroll_left
 }
 
-)F1:click_left
-(F1:unclick_left
+>F1:click_left
+<F1:unclick_left
 
 .F2:set_mouse_step_15
 .F3:set_mouse_step_40
