@@ -26,10 +26,6 @@ A1|F1|F1: "Obrigado."
 .S4>.S3:single_quote
 .S3>.S3:double_quote
 
-# direct modifiers
-S4|>.A1:scroll_up
-S4|>.A3:scroll_down
-
 mode:2
 F1:z
 
