@@ -24,7 +24,9 @@ S1|A1|A2:g,i,t,space,c,o,m,m,i,t
 .S4|.S3:single_quote
 .S3|.S3:double_quote
 
-remap(S2) { # the body of remaps has the same rules of the global scope except the trigger key cannot be used
+# the body of remaps has the same rules of
+# the global scope except the trigger key cannot be used
+remap(S2) {
   A2:z
   .F1: "bla"
 }
