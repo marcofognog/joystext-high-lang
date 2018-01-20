@@ -13,9 +13,6 @@ F1+F2:z
 F1>F3: ctrl+g
 S1>A1>A2:g,i,t,space,c,o,m,m,i,t
 
-# release hybrid
-A1|F1|F1: "Obrigado."
-
 # direct single key
 .A1:mouse_up
 .A3:mouse_down
