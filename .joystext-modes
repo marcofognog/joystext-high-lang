@@ -1,4 +1,5 @@
 mode: 1
+
 # This line is a comment.
 
 # release single key
@@ -10,8 +11,8 @@ F1+F2:y
 F1+F2:z
 
 # release sequential
-F1>F3: ctrl+g
-S1>A1>A2:g,i,t,space,c,o,m,m,i,t
+F1|F3: ctrl+g
+S1|A1|A2:g,i,t,space,c,o,m,m,i,t
 
 # direct single key
 .A1:mouse_up
@@ -20,30 +21,36 @@ S1>A1>A2:g,i,t,space,c,o,m,m,i,t
 .A2:mouse_right
 
 # direct sequential
-.S4>.S3:single_quote
-.S3>.S3:double_quote
+.S4|.S3:single_quote
+.S3|.S3:double_quote
+
+remap(S2) { # the body of remaps has the same rules of the global scope except the trigger key cannot be used
+  A2:z
+  .F1: "bla"
+}
 
 mode:2
-F1>F2>A1+A2:y
 
-F1>F2>
+F1|F2|A1+A2:y
+
+F1|F2|
   A1+A2
-<
 
-A1+A2>A3+A4:y
+A1+A2|A3+A4:y
 
-A1+A2>
+A1+A2|
   A3+A4
-<
 
-A1>A2+F4>A3:v
-.A1>A2+F4>.A3:f
+A1|A2+F4|A3:v
+.A1|A2+F4|.A3:f
 
 S1+S2+
   A1:a
   A2:b
   A1+A2:c
-+
+
+>A1:click_scroll # trigger of type 3 (direct without repetition)
+<A1:unclick_scroll # trigger of type 4 (single release)
 
 # Invalid syntax
 .F1+.F2:y  # direct combination
