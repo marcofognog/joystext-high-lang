@@ -182,22 +182,22 @@ mode 1 # navegation
 
 S3:enter,10
 
-A1:mouse_up,11
-A3:mouse_down,11
-A2:mouse_right,11
-A4:mouse_left,11
+.A1:mouse_up,11
+.A3:mouse_down,11
+.A2:mouse_right,11
+.A4:mouse_left,11
 
-S3|F1:set_mouse_step_5
-S3|F2:set_mouse_step_15
-S3|F3:set_mouse_step_25
-S3|F4:set_mouse_step_45
-S3|A1:scroll_up
-S3|A3:scroll_down
-S3|A2:scroll_right
-S3|A4:scroll_left
+S3|.F1:set_mouse_step_5
+S3|.F2:set_mouse_step_15
+S3|.F3:set_mouse_step_25
+S3|.F4:set_mouse_step_45
+S3|.A1:scroll_up
+S3|.A3:scroll_down
+S3|.A2:scroll_right
+S3|.A4:scroll_left
 
-->F1:click_left
-<-F1:unclick_left
+)F1:click_left
+(F1:unclick_left
 
 .F2:set_mouse_step_15
 .F3:set_mouse_step_40
@@ -209,16 +209,16 @@ S1+F4:escape
 
 S2:click_scroll, unclick_scroll
 
-S4|A2:ctrl+tab
-S4|A4:ctrl+shift+tab
+S4|.A2:ctrl+tab
+S4|.A4:ctrl+shift+tab
 
 # browser tabs nav
 S4+A1:ctrl+t
 S4+A3:ctrl+w
 
-S4|F1:super+j
-S4|F2:super+k
-S4|F3:super+l
+S4|)F1:super+j
+S4|)F2:super+k
+S4|)F3:super+l
 
 mode 4 # macros
 F1: "git status"
