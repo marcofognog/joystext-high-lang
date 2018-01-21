@@ -30,8 +30,7 @@ class Joyconf
         if cmd =~ /switch_to_mode/
           name_position = cmd =~ /\'.*?\'/
           mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
-          m_code = modes[mode_name]
-          cmd = "switch_to_mode#{m_code}"
+          cmd = "switch_to_mode#{modes[mode_name]}"
         end
 
         trigger = trigger_code(button_name)
