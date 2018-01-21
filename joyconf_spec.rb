@@ -17,7 +17,7 @@ F3:c,03
 F4:d,04
 A1:e,02
 END
-    expect(Joyconf.new.compile(snippet)).to eq(expected)
+    expect(Joyconf.compile(snippet)).to eq(expected)
   end
 
   it 'controls the modes' do
@@ -47,7 +47,7 @@ F1:click_left,20
 F2:switch_to_mode0,20
 F3:switch_to_mode1,20
 END
-    expect(Joyconf.new.compile(snippet)).to eq(expected)
+    expect(Joyconf.compile(snippet)).to eq(expected)
   end
 
   it 'supports spaces and comments' do
@@ -62,6 +62,22 @@ END
 F1:a,00
 F1:b,00
 END
-    expect(Joyconf.new.compile(snippet)).to eq(expected)
+    expect(Joyconf.compile(snippet)).to eq(expected)
+  end
+
+  it 'remaps buttons' do
+    snippet = <<END
+remap S1 {
+F1:a
+F1:b
+}
+END
+    expected = <<END
+S1:=,00
+F1:a,00
+S1:=,00
+F1:b,00
+END
+    expect(Joyconf.compile(snippet)).to eq(expected)
   end
 end

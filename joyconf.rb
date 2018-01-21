@@ -1,14 +1,11 @@
 class Joyconf
   attr_accessor :mode_code
 
-  def initialize
-    @mode_code = 0
-  end
-
-  def compile(source)
+  def self.compile(source)
     output = []
     next_number = 0
     modes = {}
+    mode_code = 0
 
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
@@ -23,7 +20,7 @@ class Joyconf
 
       if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.gsub("'",'')
-        @mode_code = modes[current_mode]
+        mode_code = modes[current_mode]
       elsif sanitized == "\n" || sanitized == ""
       else
         splitted = sanitized.split(':')
