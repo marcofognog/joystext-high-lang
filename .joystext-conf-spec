@@ -1,6 +1,6 @@
 # A mode is a set of key bindings
 # Name it with single quotes
-mode: 'text'
+mode 'text'
 
 # This line is a comment.
 
