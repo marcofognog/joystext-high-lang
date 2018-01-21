@@ -105,10 +105,10 @@ S3+F3:page_down
 S3+F4:home
 
 remap(S3){
-  A1:arrow_up
-  A2:arrow_right
-  A3:arrow_down
-  A4:arrow_left
+  *A1:arrow_up
+  *A2:arrow_right
+  *A3:arrow_down
+  *A4:arrow_left
 }
 
 A4+
@@ -132,10 +132,10 @@ A2+A3+F3+F4:circumflex
 # WM bindings
 
 remap(S4){
-  A2: super + arrow_right
-  A4: super + arrow_left
-  F2: super + ctrl + arrow_right
-  F4: super + ctrl + arrow_left
+  *A2: super + arrow_right
+  *A4: super + arrow_left
+  *F2: super + ctrl + arrow_right
+  *F4: super + ctrl + arrow_left
 }
 
 S4+A3:super+shift+p
@@ -216,13 +216,13 @@ S1+F4:escape
 S2:click_scroll, unclick_scroll
 
 remap(S4){
-  .A2:ctrl+tab
-  .A4:ctrl+shift+tab
+  *A2:ctrl+tab
+  *A4:ctrl+shift+tab
 
   # WM bindings
-  )F1:super+j
-  )F2:super+k
-  )F3:super+l
+  >F1:super+j
+  >F2:super+k
+  >F3:super+l
 }
 
 # browser tabs nav
