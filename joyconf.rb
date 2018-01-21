@@ -34,19 +34,9 @@ class Joyconf
           cmd = "switch_to_mode#{m_code}"
         end
 
-        if button_name =~ /\./
-          trigger_code = '1'
-        elsif button_name =~ /\</
-          trigger_code = '4'
-        elsif button_name =~ /\>/
-          trigger_code = '3'
-        elsif button_name =~ /\*/
-          trigger_code = '2'
-        else
-          trigger_code = '0'
-        end
+        trigger = trigger_code(button_name)
 
-        output << "#{button_name[-2..-1]}:#{cmd},#{mode_code}#{trigger_code}"
+        output << "#{button_name[-2..-1]}:#{cmd},#{mode_code}#{trigger}"
       end
     end
 
@@ -54,5 +44,19 @@ class Joyconf
     result << "\n"
 
     return result
+  end
+
+  def self.trigger_code(button_name)
+    if button_name =~ /\./
+      return '1'
+    elsif button_name =~ /\</
+      return '4'
+    elsif button_name =~ /\>/
+      return '3'
+    elsif button_name =~ /\*/
+      return '2'
+    else
+      return '0'
+    end
   end
 end
