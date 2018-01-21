@@ -19,11 +19,14 @@ class Joyconf
     end
 
     source.lines.each do |line|
-      if line.split(' ').first == 'mode'
+      sanitized = line.split('#').first
+
+      if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.gsub("'",'')
         @mode_code = modes[current_mode]
+      elsif sanitized == "\n" || sanitized == ""
       else
-        splitted = line.split(':')
+        splitted = sanitized.split(':')
         button_name = splitted[0]
         cmd = splitted[1].gsub("\n",'').gsub(' ','')
 

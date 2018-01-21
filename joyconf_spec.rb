@@ -23,6 +23,7 @@ END
   it 'controls the modes' do
     snippet = <<END
 mode 'text'
+
 F1:a
 F2:switch_to_mode 'macros'
 F3:switch_to_mode 'nav'
@@ -45,6 +46,21 @@ F3:switch_to_mode2,10
 F1:click_left,20
 F2:switch_to_mode0,20
 F3:switch_to_mode1,20
+END
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
+  end
+
+  it 'supports spaces and comments' do
+    snippet = <<END
+mode 'text'
+
+# this is a comment
+F1:a
+F1:b # inline comment
+END
+    expected = <<END
+F1:a,00
+F1:b,00
 END
     expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
