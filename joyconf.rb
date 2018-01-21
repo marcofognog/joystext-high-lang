@@ -56,16 +56,10 @@ class Joyconf
   end
 
   def self.trigger_code(button_name)
-    if button_name =~ /\./
-      return '1'
-    elsif button_name =~ /\</
-      return '4'
-    elsif button_name =~ /\>/
-      return '3'
-    elsif button_name =~ /\*/
-      return '2'
-    else
-      return '0'
-    end
+    return '1' if button_name =~ /\./
+    return '4' if button_name =~ /\</
+    return '3' if button_name =~ /\>/
+    return '2' if button_name =~ /\*/
+    return '0'
   end
 end
