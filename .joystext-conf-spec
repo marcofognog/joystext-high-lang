@@ -12,19 +12,21 @@ F2:b
 F1+F2:y
 F1+F2:z
 
-# release sequential
-F1|F3: ctrl+g
-S1|A1|A2:g,i,t,space,c,o,m,m,i,t
-
-# direct single key
+# direct single key (on press)
 .A1:mouse_up
 .A3:mouse_down
 .A4:mouse_left
 .A2:mouse_right
 
-# direct sequential
-.S4|.S3:single_quote
-.S3|.S3:double_quote
+# one off on press trigger, no repetition
+>A1:click_scroll # trigger of type 3 (direct without repetition)
+
+# single release trigger (doesnt depend on releasing other buttons)
+<A1:unclick_scroll # trigger of type 4 (single release)
+
+# this trigger (number 2) repeats the command after
+# a while, kind mimicks the standard key behaviour
+*A4:arrow_up
 
 # the body of remaps has the same rules of
 # the global scope except the trigger key cannot be used
@@ -32,6 +34,14 @@ remap(S2) {
   A2:z
   .F1: "bla"
 }
+
+# release sequential
+F1|F3: ctrl+g
+S1|A1|A2:g,i,t,space,c,o,m,m,i,t
+
+# direct sequential
+.S4|.S3:single_quote
+.S3|.S3:double_quote
 
 # Here we start defining another mode called 'macros'
 mode: 'macros'
@@ -44,9 +54,6 @@ A1+A2|A3+A4:x
 A1|A2+F4|A3:v
 
 .A1|A2+F4|.A3:f
-
->A1:click_scroll # trigger of type 3 (direct without repetition)
-<A1:unclick_scroll # trigger of type 4 (single release)
 
 # Invalid syntax
 .F1+.F2:y  # direct combination
