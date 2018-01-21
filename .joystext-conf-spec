@@ -30,7 +30,7 @@ F1+F2:z
 
 # the body of remaps has the same rules of
 # the global scope except the trigger modifier cannot be used
-remap(S2) {
+remap S2 {
   A2:z
   .F1: "bla"
 }
