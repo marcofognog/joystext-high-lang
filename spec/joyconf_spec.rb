@@ -88,7 +88,24 @@ F2: b
 END
     expected = <<END
 F1:shift+a,00
-F1:b,00
+F2:b,00
+END
+    expect(Joyconf.compile(snippet)).to eq(expected)
+  end
+
+  it 'defines macros' do
+    snippet = <<END
+F1: "thanks"
+F2: b
+END
+    expected = <<END
+F1:t,00
+F1:h,00
+F1:a,00
+F1:n,00
+F1:k,00
+F1:s,00
+F2:b
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
