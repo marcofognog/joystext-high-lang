@@ -80,4 +80,16 @@ F1:b,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
+
+  it 'deals well with spaces' do
+    snippet = <<END
+F1: shift + a
+F1: b
+END
+    expected = <<END
+F1:shift+a,00
+F1:b,00
+END
+    expect(Joyconf.compile(snippet)).to eq(expected)
+  end
 end
