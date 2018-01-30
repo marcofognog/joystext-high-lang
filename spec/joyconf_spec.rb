@@ -56,11 +56,11 @@ mode 'text'
 
 # this is a comment
 F1:a
-F1:b # inline comment
+F2:b # inline comment
 END
     expected = <<END
 F1:a,00
-F1:b,00
+F2:b,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
@@ -69,14 +69,14 @@ END
     snippet = <<END
 remap S1 {
 F1:a
-F1:b
+F2:b
 }
 END
     expected = <<END
 S1:=,00
 F1:a,00
 S1:=,00
-F1:b,00
+F2:b,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
@@ -84,7 +84,7 @@ END
   it 'deals well with spaces' do
     snippet = <<END
 F1: shift + a
-F1: b
+F2: b
 END
     expected = <<END
 F1:shift+a,00
