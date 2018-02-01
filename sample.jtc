@@ -139,7 +139,7 @@ S4+A3:super+shift+p
 S4+F1:super+d
 S4+A1:super+t
 
-S4+A1+F1:ctrl+shift+t,00
+S4+A1+F1:ctrl+shift+t
 
 # CTRL modifier
 S1+S2+F1:ctrl+a
