@@ -20,6 +20,20 @@ END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
 
+  it 'doesnt crop longer triger names' do
+    snippet = <<END
+start:a
+select: b
+.F2: c
+END
+    expected = <<END
+start:a,00
+select:b,00
+F2: c,10
+END
+    expect(Joyconf.compile(snippet)).to eq(expected)
+end
+
   it 'controls the modes' do
     snippet = <<END
 mode 'text'
