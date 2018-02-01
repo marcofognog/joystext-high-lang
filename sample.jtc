@@ -1,8 +1,7 @@
 select:switch_to_mode 'texting'
 start:switch_to_mode 'navagation'
 
-S3+S4:switch_to_mode2
-S1+S3:switch_to_mode3
+S1+S3:switch_to_mode 'macros'
 
 mode 'texting'
 
