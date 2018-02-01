@@ -1,3 +1,5 @@
+Bundler.require
+
 class Joyconf
   attr_accessor :mode_code
 
