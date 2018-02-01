@@ -31,15 +31,21 @@ class Joyconf
         splitted = sanitized.split(':')
         button_name = splitted[0]
         cmd = splitted[1].gsub("\n",'').gsub(' ','')
-
-        if cmd =~ /switch_to_mode/
-          cmd = build_switch_mode(cmd, modes)
-        end
-
         trigger = trigger_code(button_name)
 
-        output << "#{remap_key}:=,#{mode_code}0" if remap_key
-        output << "#{button_name[-2..-1]}:#{cmd},#{mode_code}#{trigger}"
+        if cmd =~ /"(.*?)"/
+          cmd.gsub('"','').split('').each do |char|
+            output << "#{button_name[-2..-1]}:#{char},#{mode_code}#{trigger}"
+          end
+        else
+          if cmd =~ /switch_to_mode/
+            cmd = build_switch_mode(cmd, modes)
+          end
+
+          output << "#{remap_key}:=,#{mode_code}0" if remap_key
+          output << "#{button_name[-2..-1]}:#{cmd},#{mode_code}#{trigger}"
+        end
+
       end
     end
 

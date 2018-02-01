@@ -105,7 +105,7 @@ F1:a,00
 F1:n,00
 F1:k,00
 F1:s,00
-F2:b
+F2:b,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
