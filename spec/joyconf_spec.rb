@@ -109,4 +109,30 @@ F2:b,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
+
+  it 'defines macros inside remaps' do
+    snippet = <<END
+remaps S1 {
+  F1: "thanks"
+  F2: b
+}
+END
+    expected = <<END
+S1:=,00
+F1:t,00
+S1:=,00
+F1:h,00
+S1:=,00
+F1:a,00
+S1:=,00
+F1:n,00
+S1:=,00
+F1:k,00
+S1:=,00
+F1:s,00
+S1:=,00
+F2:b,00
+END
+    expect(Joyconf.compile(snippet)).to eq(expected)
+  end
 end
