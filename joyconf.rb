@@ -32,12 +32,14 @@ class Joyconf
       else
         splitted = sanitized.split(':')
         button_name = splitted[0]
+        sanitized_button_name = button_name.gsub('.','')
+                        .gsub('<','').gsub('>','').gsub('*','')
         cmd = splitted[1].gsub("\n",'').gsub(' ','')
         trigger = trigger_code(button_name)
 
-        if cmd =~ /"(.*?)"/
+        if cmd =~ /"(.*?)"/ # has quotes, its a macro
           cmd.gsub('"','').split('').each do |char|
-            output << "#{button_name[-2..-1]}:#{char},#{mode_code}#{trigger}"
+            output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
           end
         else
           if cmd =~ /switch_to_mode/
@@ -45,7 +47,7 @@ class Joyconf
           end
 
           output << "#{remap_key}:=,#{mode_code}0" if remap_key
-          output << "#{button_name[-2..-1]}:#{cmd},#{mode_code}#{trigger}"
+          output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
         end
 
       end

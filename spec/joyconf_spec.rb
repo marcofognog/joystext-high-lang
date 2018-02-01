@@ -29,7 +29,7 @@ END
     expected = <<END
 start:a,00
 select:b,00
-F2: c,10
+F2:c,01
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
 end
