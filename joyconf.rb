@@ -31,7 +31,7 @@ class Joyconf
       elsif sanitized == "".gsub(' ','')
       else
         splitted = sanitized.split(':')
-        button_name = splitted[0]
+        button_name = splitted[0].gsub(' ','')
         sanitized_button_name = button_name.gsub('.','')
                         .gsub('<','').gsub('>','').gsub('*','')
         cmd = splitted[1].gsub("\n",'').gsub(' ','')

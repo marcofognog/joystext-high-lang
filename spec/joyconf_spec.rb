@@ -82,8 +82,8 @@ END
   it 'remaps buttons' do
     snippet = <<END
 remap S1 {
-F1:a
-F2:b
+  F1:a
+  F2:b
 }
 END
     expected = <<END
