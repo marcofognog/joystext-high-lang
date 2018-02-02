@@ -25,19 +25,17 @@ class Joyconf
       elsif tupple.key?(:remap_end)
         remap_key = nil
       elsif tupple.key?(:command)
-        sanitized_button_name = tupple[:trigger_name].delete('.')
-                                  .delete('<').delete('>').delete('*')
         trigger = trigger_code(tupple[:trigger_name])
         cmd = tupple[:command]
+        button = sanitized_button_name(tupple)
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
-        output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
+        output << "#{button}:#{cmd},#{mode_code}#{trigger}"
       elsif tupple.key?(:macro)
         trigger = trigger_code(tupple[:trigger_name])
-        sanitized_button_name = tupple[:trigger_name].delete('.')
-                                  .delete('<').delete('>').delete('*')
+        button = sanitized_button_name(tupple)
         tupple[:macro].delete('"').split('').each do |char|
-          output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
+          output << "#{button}:#{char},#{mode_code}#{trigger}"
         end
       end
 
@@ -48,6 +46,11 @@ class Joyconf
     result << "\n"
 
     return result
+  end
+
+  def self.sanitized_button_name(tupple)
+    tupple[:trigger_name].delete('.')
+      .delete('<').delete('>').delete('*')
   end
 
   def self.tokenize(lines)
