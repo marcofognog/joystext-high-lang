@@ -21,11 +21,11 @@ class Joyconf
       sanitized = line.split('#').first.delete("\n")
 
       if sanitized.split(' ').first == 'mode'
-        table_line  = { :mode => 'mode' }
+        table_line  = { mode: 'mode' }
       elsif sanitized.split(' ').first == 'remap'
-        table_line  = { :remap_begin => remap_key }
+        table_line  = { remap_begin: remap_key }
       elsif sanitized == '}'.delete(' ')
-        table_line  = { :remap_end => '}' }
+        table_line  = { remap_end: '}' }
       elsif sanitized == "".delete(' ')
       else
         splitted = sanitized.split(':')
