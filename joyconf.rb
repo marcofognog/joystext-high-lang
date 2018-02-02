@@ -17,54 +17,26 @@ class Joyconf
       end
     end
 
-    source.lines.each do |line|
-      sanitized = line.split('#').first.delete("\n")
-
-      if sanitized.split(' ').first == 'mode'
-        table_line  = { mode: 'mode' }
-      elsif sanitized.split(' ').first == 'remap'
-        table_line  = { remap_begin: remap_key }
-      elsif sanitized == '}'.delete(' ')
-        table_line  = { remap_end: '}' }
-      elsif sanitized == ''.delete(' ')
-      else
-        splitted = sanitized.split(':')
-        button_name = splitted[0].delete(' ')
-        sanitized_button_name = button_name.delete('.')
-                                  .delete('<').delete('>').delete('*')
-        cmd = splitted[1].delete("\n").delete(' ')
-        trigger = trigger_code(button_name)
-
-        if quoted?(cmd)
-          table_line = {
-            trigger_name: button_name,
-            macro: cmd,
-            mode_code: mode_code,
-            trigger_type: trigger
-          }
-        else
-          table_line = {
-            trigger_name: button_name,
-            command: cmd,
-            mode_code: mode_code,
-            trigger_type: trigger
-          }
-        end
-      end
-
-      if table_line.key?(:mode)
-        current_mode = line.split(' ').last.delete("'")
-        mode_code = modes[current_mode]
-      elsif table_line.key?(:remap_begin)
-        remap_key = sanitized.split(' ')[1]
-      elsif table_line.key?(:remap_end)
+    tokenize(source.lines).each do |tupple|
+      if tupple.key?(:mode)
+        mode_code = modes[tupple[:mode]]
+      elsif tupple.key?(:remap_begin)
+        remap_key = tupple[:remap_begin]
+      elsif tupple.key?(:remap_end)
         remap_key = nil
-      elsif table_line.key?(:command)
+      elsif tupple.key?(:command)
+        sanitized_button_name = tupple[:trigger_name].delete('.')
+                                  .delete('<').delete('>').delete('*')
+        trigger = trigger_code(tupple[:trigger_name])
+        cmd = tupple[:command]
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
-      elsif table_line.key?(:macro)
-        cmd.delete('"').split('').each do |char|
+      elsif tupple.key?(:macro)
+        trigger = trigger_code(tupple[:trigger_name])
+        sanitized_button_name = tupple[:trigger_name].delete('.')
+                                  .delete('<').delete('>').delete('*')
+        tupple[:macro].delete('"').split('').each do |char|
           output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
         end
       end
@@ -76,6 +48,40 @@ class Joyconf
     result << "\n"
 
     return result
+  end
+
+  def self.tokenize(lines)
+    table = []
+    lines.each do |line|
+      sanitized = line.split('#').first.delete("\n")
+
+      if sanitized.split(' ').first == 'mode'
+        current_mode = line.split(' ').last.delete("'")
+        table << { mode: current_mode }
+      elsif sanitized.split(' ').first == 'remap'
+        table << { remap_begin: sanitized.split(' ')[1] }
+      elsif sanitized == '}'.delete(' ')
+        table << { remap_end: '}' }
+      elsif sanitized == ''.delete(' ')
+      else
+        splitted = sanitized.split(':')
+        button_name = splitted[0].delete(' ')
+        cmd = splitted[1].delete("\n").delete(' ')
+
+        if quoted?(cmd)
+          table << {
+            trigger_name: button_name,
+            macro: cmd
+          }
+        else
+          table << {
+            trigger_name: button_name,
+            command: cmd
+          }
+        end
+      end
+    end
+    table
   end
 
   def self.quoted?(cmd)
