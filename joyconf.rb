@@ -12,7 +12,7 @@ class Joyconf
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
         mode_name = line.split(' ').last.delete("'")
-        modes.merge!({ mode_name => next_number })
+        modes[mode_name] = next_number
         next_number = next_number + 1
       end
     end
@@ -26,12 +26,12 @@ class Joyconf
         table_line  = { remap_begin: remap_key }
       elsif sanitized == '}'.delete(' ')
         table_line  = { remap_end: '}' }
-      elsif sanitized == "".delete(' ')
+      elsif sanitized == ''.delete(' ')
       else
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
         sanitized_button_name = button_name.delete('.')
-                        .delete('<').delete('>').delete('*')
+                                  .delete('<').delete('>').delete('*')
         cmd = splitted[1].delete("\n").delete(' ')
         trigger = trigger_code(button_name)
 
@@ -60,9 +60,7 @@ class Joyconf
       elsif table_line.key?(:remap_end)
         inside_remap = nil
       elsif table_line.key?(:command)
-        if cmd =~ /switch_to_mode/
-          cmd = build_switch_mode(cmd, modes)
-        end
+        cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
       elsif table_line.key?(:macro)
@@ -87,7 +85,7 @@ class Joyconf
   def self.build_switch_mode(cmd, modes)
     name_position = cmd =~ /\'.*?\'/
     mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
-    return "switch_to_mode#{modes[mode_name]}"
+    "switch_to_mode#{modes[mode_name]}"
   end
 
   def self.trigger_code(button_name)
