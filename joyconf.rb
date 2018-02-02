@@ -7,6 +7,7 @@ class Joyconf
     modes = {}
     mode_code = 0
     remap_key = nil
+    table_line = {}
 
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
@@ -20,8 +21,7 @@ class Joyconf
       sanitized = line.split('#').first.gsub("\n",'')
 
       if sanitized.split(' ').first == 'mode'
-        current_mode = line.split(' ').last.gsub("'",'')
-        mode_code = modes[current_mode]
+        table_line  = { :mode => 'mode' }
       elsif sanitized.split(' ').first == 'remap'
         remap_key = sanitized.split(' ')[1]
       elsif sanitized == '}'.gsub(' ','')
@@ -47,8 +47,14 @@ class Joyconf
           output << "#{remap_key}:=,#{mode_code}0" if remap_key
           output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
         end
-
       end
+
+      if table_line.key?(:mode)
+        current_mode = line.split(' ').last.gsub("'",'')
+        mode_code = modes[current_mode]
+      end
+
+      table_line = {}
     end
 
     result = output.join("\n")
