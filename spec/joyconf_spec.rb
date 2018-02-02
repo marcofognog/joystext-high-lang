@@ -126,6 +126,14 @@ END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end
 
+  it 'throws error for unrecognized triggers' do
+    snippet = <<END
+F1: "thanks"
+F5: b
+END
+    expect { Joyconf.compile(snippet) }.to raise_error
+  end
+
   it 'defines macros inside remaps' do
     snippet = <<END
 remaps S1 {

@@ -1,5 +1,14 @@
 class Joyconf
+  class UnrecognizedTriggerName < StandardError; end
+
   attr_accessor :mode_code
+
+  VALID_TRIGGER_NAMES = [
+    'F1', 'F2','F3', 'F4',
+    'A1', 'A2', 'A3', 'A4',
+    'S1', 'S2', 'S3', 'S4',
+    'start', 'select'
+  ]
 
   def self.compile(source)
     output = []
@@ -27,13 +36,13 @@ class Joyconf
       elsif tupple.key?(:command)
         trigger = trigger_code(tupple[:trigger_name])
         cmd = tupple[:command]
-        button = sanitized_button_name(tupple)
+        button = sanitized_button_name(tupple[:trigger_name])
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{button}:#{cmd},#{mode_code}#{trigger}"
       elsif tupple.key?(:macro)
         trigger = trigger_code(tupple[:trigger_name])
-        button = sanitized_button_name(tupple)
+        button = sanitized_button_name(tupple[:trigger_name])
         tupple[:macro].delete('"').split('').each do |char|
           output << "#{button}:#{char},#{mode_code}#{trigger}"
         end
@@ -50,8 +59,8 @@ class Joyconf
     return result
   end
 
-  def self.sanitized_button_name(tupple)
-    tupple[:trigger_name].delete('.')
+  def self.sanitized_button_name(name)
+    name.delete('.')
       .delete('<').delete('>').delete('*')
   end
 
@@ -73,6 +82,8 @@ class Joyconf
         button_name = splitted[0].delete(' ')
         cmd = splitted[1].delete("\n").delete(' ')
 
+        check_valid_trigger_name(button_name)
+
         if quoted?(cmd)
           table << {
             trigger_name: button_name,
@@ -87,6 +98,11 @@ class Joyconf
       end
     end
     table
+  end
+
+  def self.check_valid_trigger_name(name)
+    pure = sanitized_button_name(name)
+    raise UnrecognizedTriggerName unless VALID_TRIGGER_NAMES.include?(pure)
   end
 
   def self.quoted?(cmd)
