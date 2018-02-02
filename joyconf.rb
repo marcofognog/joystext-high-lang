@@ -65,9 +65,9 @@ class Joyconf
         table << { mode: current_mode }
       elsif sanitized.split(' ').first == 'remap'
         table << { remap_begin: sanitized.split(' ')[1] }
-      elsif sanitized == '}'.delete(' ')
+      elsif sanitized.delete(' ') == '}'
         table << { remap_end: '}' }
-      elsif sanitized == ''.delete(' ')
+      elsif sanitized.delete(' ') == ''
       else
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
