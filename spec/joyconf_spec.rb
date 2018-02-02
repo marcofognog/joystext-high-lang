@@ -85,12 +85,14 @@ remap S1 {
   F1:a
   F2:b
 }
+F3:c
 END
     expected = <<END
 S1:=,00
 F1:a,00
 S1:=,00
 F2:b,00
+F3:c,00
 END
     expect(Joyconf.compile(snippet)).to eq(expected)
   end

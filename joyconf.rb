@@ -58,7 +58,7 @@ class Joyconf
       elsif table_line.key?(:remap_begin)
         remap_key = sanitized.split(' ')[1]
       elsif table_line.key?(:remap_end)
-        inside_remap = nil
+        remap_key = nil
       elsif table_line.key?(:command)
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
