@@ -43,9 +43,6 @@ class Joyconf
             trigger_type: trigger
           }
         else
-          if cmd =~ /switch_to_mode/
-            cmd = build_switch_mode(cmd, modes)
-          end
           table_line = {
             trigger_name: button_name,
             command: cmd,
@@ -63,6 +60,9 @@ class Joyconf
       elsif table_line.key?(:remap_end)
         inside_remap = nil
       elsif table_line.key?(:command)
+        if cmd =~ /switch_to_mode/
+          cmd = build_switch_mode(cmd, modes)
+        end
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
       elsif table_line.key?(:macro)
