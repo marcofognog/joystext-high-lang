@@ -25,7 +25,7 @@ class Joyconf
       elsif sanitized.split(' ').first == 'remap'
         table_line  = { :remap_begin => remap_key }
       elsif sanitized == '}'.gsub(' ','')
-        inside_remap = nil
+        table_line  = { :remap_end => '}' }
       elsif sanitized == "".gsub(' ','')
       else
         splitted = sanitized.split(':')
@@ -54,6 +54,8 @@ class Joyconf
         mode_code = modes[current_mode]
       elsif table_line.key?(:remap_begin)
         remap_key = sanitized.split(' ')[1]
+      elsif table_line.key?(:remap_end)
+        inside_remap = nil
       end
 
       table_line = {}
