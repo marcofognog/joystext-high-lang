@@ -60,8 +60,7 @@ class Joyconf
   end
 
   def self.sanitized_button_name(name)
-    name.delete('.')
-      .delete('<').delete('>').delete('*')
+    name.delete('.').delete('<').delete('>').delete('*')
   end
 
   def self.tokenize(lines)
