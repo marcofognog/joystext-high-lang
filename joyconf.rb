@@ -59,10 +59,6 @@ class Joyconf
     return result
   end
 
-  def self.sanitized_button_name(name)
-    name.delete('.').delete('<').delete('>').delete('*')
-  end
-
   def self.tokenize(lines)
     table = []
     lines.each do |line|
@@ -102,6 +98,10 @@ class Joyconf
   def self.check_valid_trigger_name(name)
     pure = sanitized_button_name(name)
     raise UnrecognizedTriggerName unless VALID_TRIGGER_NAMES.include?(pure)
+  end
+
+  def self.sanitized_button_name(name)
+    name.delete('.').delete('<').delete('>').delete('*')
   end
 
   def self.quoted?(cmd)
