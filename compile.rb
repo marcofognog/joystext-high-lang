@@ -1,4 +1,6 @@
 $LOAD_PATH << '.'
+
+Bundler.require
 require 'joyconf'
 
 filename = ARGV[0]
