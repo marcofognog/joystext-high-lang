@@ -22,7 +22,7 @@ class Joyconf
       if line.split(' ').first == 'mode'
         mode_name = line.split(' ').last.delete("'")
         modes[mode_name] = next_number
-        next_number = next_number + 1
+        next_number += 1
       end
     end
 
