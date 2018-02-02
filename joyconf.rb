@@ -11,28 +11,28 @@ class Joyconf
 
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
-        mode_name = line.split(' ').last.gsub("'",'')
+        mode_name = line.split(' ').last.delete("'")
         modes.merge!({ mode_name => next_number })
         next_number = next_number + 1
       end
     end
 
     source.lines.each do |line|
-      sanitized = line.split('#').first.gsub("\n",'')
+      sanitized = line.split('#').first.delete("\n")
 
       if sanitized.split(' ').first == 'mode'
         table_line  = { :mode => 'mode' }
       elsif sanitized.split(' ').first == 'remap'
         table_line  = { :remap_begin => remap_key }
-      elsif sanitized == '}'.gsub(' ','')
+      elsif sanitized == '}'.delete(' ')
         table_line  = { :remap_end => '}' }
-      elsif sanitized == "".gsub(' ','')
+      elsif sanitized == "".delete(' ')
       else
         splitted = sanitized.split(':')
-        button_name = splitted[0].gsub(' ','')
-        sanitized_button_name = button_name.gsub('.','')
-                        .gsub('<','').gsub('>','').gsub('*','')
-        cmd = splitted[1].gsub("\n",'').gsub(' ','')
+        button_name = splitted[0].delete(' ')
+        sanitized_button_name = button_name.delete('.')
+                        .delete('<').delete('>').delete('*')
+        cmd = splitted[1].delete("\n").delete(' ')
         trigger = trigger_code(button_name)
 
         if quoted?(cmd)
@@ -53,7 +53,7 @@ class Joyconf
       end
 
       if table_line.key?(:mode)
-        current_mode = line.split(' ').last.gsub("'",'')
+        current_mode = line.split(' ').last.delete("'")
         mode_code = modes[current_mode]
       elsif table_line.key?(:remap_begin)
         remap_key = sanitized.split(' ')[1]
@@ -66,7 +66,7 @@ class Joyconf
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
       elsif table_line.key?(:macro)
-        cmd.gsub('"','').split('').each do |char|
+        cmd.delete('"').split('').each do |char|
           output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
         end
       end
