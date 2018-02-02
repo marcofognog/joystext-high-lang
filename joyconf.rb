@@ -23,7 +23,7 @@ class Joyconf
       if sanitized.split(' ').first == 'mode'
         table_line  = { :mode => 'mode' }
       elsif sanitized.split(' ').first == 'remap'
-        remap_key = sanitized.split(' ')[1]
+        table_line  = { :remap_begin => remap_key }
       elsif sanitized == '}'.gsub(' ','')
         inside_remap = nil
       elsif sanitized == "".gsub(' ','')
@@ -52,6 +52,8 @@ class Joyconf
       if table_line.key?(:mode)
         current_mode = line.split(' ').last.gsub("'",'')
         mode_code = modes[current_mode]
+      elsif table_line.key?(:remap_begin)
+        remap_key = sanitized.split(' ')[1]
       end
 
       table_line = {}
