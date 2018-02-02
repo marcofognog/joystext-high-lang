@@ -37,6 +37,8 @@ class Joyconf
         tupple[:macro].delete('"').split('').each do |char|
           output << "#{button}:#{char},#{mode_code}#{trigger}"
         end
+      else
+        raise 'I dont know what to do'
       end
 
       table_line = {}
