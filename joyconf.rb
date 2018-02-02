@@ -36,9 +36,12 @@ class Joyconf
         trigger = trigger_code(button_name)
 
         if cmd =~ /"(.*?)"/ # has quotes, its a macro
-          cmd.gsub('"','').split('').each do |char|
-            output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
-          end
+          table_line = {
+            trigger_name: button_name,
+            macro: cmd,
+            mode_code: mode_code,
+            trigger_type: trigger
+          }
         else
           if cmd =~ /switch_to_mode/
             cmd = build_switch_mode(cmd, modes)
@@ -62,6 +65,10 @@ class Joyconf
       elsif table_line.key?(:command)
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{sanitized_button_name}:#{cmd},#{mode_code}#{trigger}"
+      elsif table_line.key?(:macro)
+        cmd.gsub('"','').split('').each do |char|
+          output << "#{sanitized_button_name}:#{char},#{mode_code}#{trigger}"
+        end
       end
 
       table_line = {}
