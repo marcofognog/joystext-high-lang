@@ -35,7 +35,7 @@ class Joyconf
         cmd = splitted[1].gsub("\n",'').gsub(' ','')
         trigger = trigger_code(button_name)
 
-        if cmd =~ /"(.*?)"/ # has quotes, its a macro
+        if quoted?(cmd)
           table_line = {
             trigger_name: button_name,
             macro: cmd,
@@ -78,6 +78,10 @@ class Joyconf
     result << "\n"
 
     return result
+  end
+
+  def self.quoted?(cmd)
+    cmd =~ /"(.*?)"/
   end
 
   def self.build_switch_mode(cmd, modes)
