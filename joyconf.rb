@@ -16,7 +16,6 @@ class Joyconf
     modes = {}
     mode_code = 0
     remap_key = nil
-    table_line = {}
 
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
@@ -49,8 +48,6 @@ class Joyconf
       else
         raise 'I dont know what to do'
       end
-
-      table_line = {}
     end
 
     result = output.join("\n")
