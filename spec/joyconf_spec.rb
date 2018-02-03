@@ -179,8 +179,6 @@ END
     end
   end
 
-
-
   it 'defines macros inside remaps' do
     snippet = <<END
 remaps S1 {
