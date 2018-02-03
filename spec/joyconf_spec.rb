@@ -134,6 +134,54 @@ END
     expect { Joyconf.compile(snippet) }.to raise_error
   end
 
+  context 'throws error for unrecognized definitions' do
+    it 'incomplete defintion' do
+      snippet = <<END
+mode
+F5: b
+END
+      expect { Joyconf.compile(snippet) }.to raise_error
+    end
+
+    it 'lack of quotes in space definition' do
+      snippet = <<END
+mode sfa
+F5: b
+END
+      expect { Joyconf.compile(snippet) }.to raise_error
+    end
+
+    it 'unrecognized identifier in spaced definition' do
+      snippet = <<END
+invalid 'name'
+F5: b
+END
+      expect { Joyconf.compile(snippet) }.to raise_error
+    end
+
+    it 'unclosed remap' do
+      snippet = <<END
+remap S1 {
+F5: b
+END
+      expect { Joyconf.compile(snippet) }.to raise_error
+    end
+
+    it 'extra remap end' do
+      snippet = <<END
+remap S2 {
+  F3:k
+}
+F5: b
+}
+END
+      expect { Joyconf.compile(snippet) }.to raise_error
+    end
+  end
+
+
+  end
+
   it 'defines macros inside remaps' do
     snippet = <<END
 remaps S1 {
@@ -160,4 +208,5 @@ END
     pending 'to be implemented'
     raise 'fails'
   end
+
 end
