@@ -25,24 +25,24 @@ class Joyconf
       end
     end
 
-    tokenize(source.lines).each do |definition|
-      if definition.key?(:mode)
-        mode_code = modes[definition[:mode]]
-      elsif definition.key?(:remap_begin)
-        remap_key = definition[:remap_begin]
-      elsif definition.key?(:remap_end)
+    tokenize(source.lines).each do |line|
+      if line.key?(:mode)
+        mode_code = modes[line[:mode]]
+      elsif line.key?(:remap_begin)
+        remap_key = line[:remap_begin]
+      elsif line.key?(:remap_end)
         remap_key = nil
-      elsif definition.key?(:command)
-        trigger = trigger_code(definition[:trigger_name])
-        cmd = definition[:command]
-        button = sanitized_button_name(definition[:trigger_name])
+      elsif line.key?(:command)
+        trigger = trigger_code(line[:trigger_name])
+        cmd = line[:command]
+        button = sanitized_button_name(line[:trigger_name])
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
         output << "#{remap_key}:=,#{mode_code}0" if remap_key
         output << "#{button}:#{cmd},#{mode_code}#{trigger}"
-      elsif definition.key?(:macro)
-        trigger = trigger_code(definition[:trigger_name])
-        button = sanitized_button_name(definition[:trigger_name])
-        definition[:macro].delete('"').split('').each do |char|
+      elsif line.key?(:macro)
+        trigger = trigger_code(line[:trigger_name])
+        button = sanitized_button_name(line[:trigger_name])
+        line[:macro].delete('"').split('').each do |char|
           output << "#{button}:#{char},#{mode_code}#{trigger}"
         end
       else
