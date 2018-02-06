@@ -80,7 +80,7 @@ class Joyconf
           parse_tree << Command.new(line)
         end
       elsif line.key?(:macro)
-          parse_tree << Macro.new(line)
+        parse_tree << Macro.new(line)
       else
         parse_tree << line
       end
