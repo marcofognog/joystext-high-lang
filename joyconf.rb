@@ -3,6 +3,12 @@ module ParseHelper
     name.delete('.').delete('<').delete('>').delete('*')
   end
 
+  def build_switch_mode(cmd, modes)
+    name_position = cmd =~ /\'.*?\'/
+    mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
+    "switch_to_mode#{modes[mode_name]}"
+  end
+
   def trigger_code(button_name)
     return '1' if button_name =~ /\./
     return '4' if button_name =~ /\</
@@ -42,13 +48,6 @@ class Joyconf
       if line.class == Hash
         if line.key?(:mode)
           @mode_code = modes[line[:mode]]
-        elsif line.key?(:command)
-          trigger = trigger_code(line[:trigger_name])
-          cmd = line[:command]
-          button = sanitized_button_name(line[:trigger_name])
-          cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
-          output << "#{remap_key}:=,#{@mode_code}0" if remap_key
-          output << "#{button}:#{cmd},#{@mode_code}#{trigger}"
         elsif line.key?(:macro)
           trigger = trigger_code(line[:trigger_name])
           button = sanitized_button_name(line[:trigger_name])
@@ -59,7 +58,7 @@ class Joyconf
           raise 'I dont know what to do'
         end
       else
-        output << line.build(@mode_code)
+        output << line.build(modes, @mode_code)
       end
     end
 
@@ -84,7 +83,7 @@ class Joyconf
         if remap_definition
           parse_tree.last.nested << Command.new(line[:trigger_name], line[:command])
         else
-          parse_tree << line
+          parse_tree << Command.new(line[:trigger_name], line[:command])
         end
       else
         parse_tree << line
@@ -137,12 +136,6 @@ class Joyconf
   def quoted?(cmd)
     cmd =~ /"(.*?)"/
   end
-
-  def build_switch_mode(cmd, modes)
-    name_position = cmd =~ /\'.*?\'/
-    mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
-    "switch_to_mode#{modes[mode_name]}"
-  end
 end
 
 class Remap
@@ -153,8 +146,8 @@ class Remap
     @trigger = trigger
   end
 
-  def build(mode_code=nil)
-    nested.map { |n| n.build(mode_code, @trigger) }
+  def build(modes, mode_code=nil)
+    nested.map { |n| n.build(modes, mode_code, @trigger) }
   end
 end
 
@@ -166,11 +159,13 @@ class Command
     @command = command
   end
 
-  def build(mode=nil, remap_trigger=nil)
+  def build(modes, mode=nil, remap_trigger=nil)
     out = []
     button = sanitized_button_name(@trigger)
+    cmd = @command
+    cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
     out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
-    out << "#{button}:#{@command},#{mode}#{trigger_code(@trigger)}"
+    out << "#{button}:#{cmd},#{mode}#{trigger_code(@trigger)}"
     out.join("\n")
   end
 end
