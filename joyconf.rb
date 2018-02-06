@@ -48,12 +48,6 @@ class Joyconf
       if line.class == Hash
         if line.key?(:mode)
           @mode_code = modes[line[:mode]]
-        elsif line.key?(:macro)
-          trigger = trigger_code(line[:trigger_name])
-          button = sanitized_button_name(line[:trigger_name])
-          line[:macro].delete('"').split('').each do |char|
-            output << "#{button}:#{char},#{@mode_code}#{trigger}"
-          end
         else
           raise 'I dont know what to do'
         end
@@ -85,6 +79,8 @@ class Joyconf
         else
           parse_tree << Command.new(line[:trigger_name], line[:command])
         end
+      elsif line.key?(:macro)
+          parse_tree << Macro.new(line[:trigger_name], line[:macro])
       else
         parse_tree << line
       end
@@ -167,5 +163,24 @@ class Command
     out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
     out << "#{button}:#{cmd},#{mode}#{trigger_code(@trigger)}"
     out.join("\n")
+  end
+end
+
+class Macro
+  include ParseHelper
+
+  def initialize(trigger_name, macro)
+    @trigger = trigger_name
+    @macro = macro
+  end
+
+  def build(modes, mode_code)
+    output = []
+    trigger = trigger_code(@trigger)
+    button = sanitized_button_name(@trigger)
+    @macro.delete('"').split('').each do |char|
+      output << "#{button}:#{char},#{mode_code}#{trigger}"
+    end
+    output
   end
 end
