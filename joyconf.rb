@@ -69,18 +69,18 @@ class Joyconf
     tokenized = tokenize(source.lines)
     tokenized.each do |line|
       if line.key?(:remap_begin)
-        parse_tree << Remap.new(line[:remap_begin])
+        parse_tree << Remap.new(line)
         remap_definition = true
       elsif line.key?(:remap_end)
         remap_definition = false
       elsif line.key?(:command)
         if remap_definition
-          parse_tree.last.nested << Command.new(line[:trigger_name], line[:command])
+          parse_tree.last.nested << Command.new(line)
         else
-          parse_tree << Command.new(line[:trigger_name], line[:command])
+          parse_tree << Command.new(line)
         end
       elsif line.key?(:macro)
-          parse_tree << Macro.new(line[:trigger_name], line[:macro])
+          parse_tree << Macro.new(line)
       else
         parse_tree << line
       end
@@ -137,9 +137,9 @@ end
 class Remap
   attr_accessor :nested
 
-  def initialize(trigger)
+  def initialize(remap_begin:, nested:)
     @nested = []
-    @trigger = trigger
+    @trigger = remap_begin
   end
 
   def build(modes, mode_code=nil)
@@ -150,7 +150,7 @@ end
 class Command
   include ParseHelper
 
-  def initialize(trigger_name, command)
+  def initialize(trigger_name:, command:)
     @trigger = trigger_name
     @command = command
   end
@@ -169,7 +169,7 @@ end
 class Macro
   include ParseHelper
 
-  def initialize(trigger_name, macro)
+  def initialize(trigger_name:, macro:)
     @trigger = trigger_name
     @macro = macro
   end
