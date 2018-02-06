@@ -62,10 +62,7 @@ class Joyconf
 
     tokenized = tokenize(source.lines)
     tokenized.each do |line|
-      if line.key?(:mode)
-        mode_code = modes[line[:mode]]
-        parse_tree << line
-      elsif line.key?(:remap_begin)
+      if line.key?(:remap_begin)
         parse_tree << line
         remap_definition = true
       elsif line.key?(:remap_end)
@@ -77,10 +74,8 @@ class Joyconf
         else
           parse_tree << line
         end
-      elsif line.key?(:macro)
-        parse_tree << line
       else
-        raise 'I dont know what to do'
+        parse_tree << line
       end
     end
     parse_tree
