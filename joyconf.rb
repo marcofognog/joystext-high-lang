@@ -1,5 +1,20 @@
+module ParseHelper
+  def sanitized_button_name(name)
+    name.delete('.').delete('<').delete('>').delete('*')
+  end
+
+  def trigger_code(button_name)
+    return '1' if button_name =~ /\./
+    return '4' if button_name =~ /\</
+    return '3' if button_name =~ /\>/
+    return '2' if button_name =~ /\*/
+    return '0'
+  end
+end
+
 class Joyconf
   class UnrecognizedTriggerName < StandardError; end
+  include ParseHelper
 
   VALID_TRIGGER_NAMES = [
     'F1', 'F2','F3', 'F4',
@@ -23,28 +38,28 @@ class Joyconf
       end
     end
 
-    tokenize(source.lines).each do |line|
-      if line.key?(:mode)
-        @mode_code = modes[line[:mode]]
-      elsif line.key?(:remap_begin)
-        remap_key = line[:remap_begin]
-      elsif line.key?(:remap_end)
-        remap_key = nil
-      elsif line.key?(:command)
-        trigger = trigger_code(line[:trigger_name])
-        cmd = line[:command]
-        button = sanitized_button_name(line[:trigger_name])
-        cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
-        output << "#{remap_key}:=,#{@mode_code}0" if remap_key
-        output << "#{button}:#{cmd},#{@mode_code}#{trigger}"
-      elsif line.key?(:macro)
-        trigger = trigger_code(line[:trigger_name])
-        button = sanitized_button_name(line[:trigger_name])
-        line[:macro].delete('"').split('').each do |char|
-          output << "#{button}:#{char},#{@mode_code}#{trigger}"
+    parse(source).each do |line|
+      if line.class == Hash
+        if line.key?(:mode)
+          @mode_code = modes[line[:mode]]
+        elsif line.key?(:command)
+          trigger = trigger_code(line[:trigger_name])
+          cmd = line[:command]
+          button = sanitized_button_name(line[:trigger_name])
+          cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
+          output << "#{remap_key}:=,#{@mode_code}0" if remap_key
+          output << "#{button}:#{cmd},#{@mode_code}#{trigger}"
+        elsif line.key?(:macro)
+          trigger = trigger_code(line[:trigger_name])
+          button = sanitized_button_name(line[:trigger_name])
+          line[:macro].delete('"').split('').each do |char|
+            output << "#{button}:#{char},#{@mode_code}#{trigger}"
+          end
+        else
+          raise 'I dont know what to do'
         end
       else
-        raise 'I dont know what to do'
+        output << line.build(@mode_code)
       end
     end
 
@@ -61,14 +76,13 @@ class Joyconf
     tokenized = tokenize(source.lines)
     tokenized.each do |line|
       if line.key?(:remap_begin)
-        parse_tree << line
+        parse_tree << Remap.new(line[:remap_begin])
         remap_definition = true
       elsif line.key?(:remap_end)
-        parse_tree << line
         remap_definition = false
       elsif line.key?(:command)
         if remap_definition
-          parse_tree.last[:nested] << line
+          parse_tree.last.nested << Command.new(line[:trigger_name], line[:command])
         else
           parse_tree << line
         end
@@ -120,10 +134,6 @@ class Joyconf
     raise UnrecognizedTriggerName unless VALID_TRIGGER_NAMES.include?(pure)
   end
 
-  def sanitized_button_name(name)
-    name.delete('.').delete('<').delete('>').delete('*')
-  end
-
   def quoted?(cmd)
     cmd =~ /"(.*?)"/
   end
@@ -133,12 +143,34 @@ class Joyconf
     mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
     "switch_to_mode#{modes[mode_name]}"
   end
+end
 
-  def trigger_code(button_name)
-    return '1' if button_name =~ /\./
-    return '4' if button_name =~ /\</
-    return '3' if button_name =~ /\>/
-    return '2' if button_name =~ /\*/
-    return '0'
+class Remap
+  attr_accessor :nested
+
+  def initialize(trigger)
+    @nested = []
+    @trigger = trigger
+  end
+
+  def build(mode_code=nil)
+    nested.map { |n| n.build(mode_code, @trigger) }
+  end
+end
+
+class Command
+  include ParseHelper
+
+  def initialize(trigger_name, command)
+    @trigger = trigger_name
+    @command = command
+  end
+
+  def build(mode=nil, remap_trigger=nil)
+    out = []
+    button = sanitized_button_name(@trigger)
+    out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
+    out << "#{button}:#{@command},#{mode}#{trigger_code(@trigger)}"
+    out.join("\n")
   end
 end
