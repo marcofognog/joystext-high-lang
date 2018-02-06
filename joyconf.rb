@@ -10,7 +10,7 @@ class Joyconf
     'start', 'select'
   ]
 
-  def self.compile(source)
+  def compile(source)
     output = []
     next_number = 0
     modes = {}
@@ -56,7 +56,7 @@ class Joyconf
     return result
   end
 
-  def self.parse(source)
+  def parse(source)
     parse_tree = []
     remap_definition = false
 
@@ -81,7 +81,7 @@ class Joyconf
     parse_tree
   end
 
-  def self.tokenize(lines)
+  def tokenize(lines)
     table = []
     lines.each do |line|
       sanitized = line.split('#').first.delete("\n")
@@ -117,26 +117,26 @@ class Joyconf
     table
   end
 
-  def self.check_valid_trigger_name(name)
+  def check_valid_trigger_name(name)
     pure = sanitized_button_name(name)
     raise UnrecognizedTriggerName unless VALID_TRIGGER_NAMES.include?(pure)
   end
 
-  def self.sanitized_button_name(name)
+  def sanitized_button_name(name)
     name.delete('.').delete('<').delete('>').delete('*')
   end
 
-  def self.quoted?(cmd)
+  def quoted?(cmd)
     cmd =~ /"(.*?)"/
   end
 
-  def self.build_switch_mode(cmd, modes)
+  def build_switch_mode(cmd, modes)
     name_position = cmd =~ /\'.*?\'/
     mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
     "switch_to_mode#{modes[mode_name]}"
   end
 
-  def self.trigger_code(button_name)
+  def trigger_code(button_name)
     return '1' if button_name =~ /\./
     return '4' if button_name =~ /\</
     return '3' if button_name =~ /\>/

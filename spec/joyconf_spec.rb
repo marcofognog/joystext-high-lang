@@ -17,7 +17,7 @@ F3:c,03
 F4:d,04
 A1:e,02
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'doesnt crop longer triger names' do
@@ -31,7 +31,7 @@ start:a,00
 select:b,00
 F2:c,01
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
 end
 
   it 'controls the modes' do
@@ -61,7 +61,7 @@ F1:click_left,20
 F2:switch_to_mode0,20
 F3:switch_to_mode1,20
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'supports spaces and comments' do
@@ -76,7 +76,7 @@ END
 F1:a,00
 F2:b,00
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'remaps buttons' do
@@ -94,7 +94,7 @@ S1:=,00
 F2:b,00
 F3:c,00
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'deals well with spaces' do
@@ -106,7 +106,7 @@ END
 F1:shift+a,00
 F2:b,00
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'defines macros' do
@@ -123,7 +123,7 @@ F1:k,00
 F1:s,00
 F2:b,00
 END
-    expect(Joyconf.compile(snippet)).to eq(expected)
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
   it 'throws error for unrecognized triggers' do
@@ -131,7 +131,7 @@ END
 F1: "thanks"
 F5: b
 END
-    expect { Joyconf.compile(snippet) }.to raise_error
+    expect { Joyconf.new.compile(snippet) }.to raise_error
   end
 
   context 'throws error for unrecognized definitions' do
@@ -140,7 +140,7 @@ END
 mode
 F5: b
 END
-      expect { Joyconf.compile(snippet) }.to raise_error
+      expect { Joyconf.new.compile(snippet) }.to raise_error
     end
 
     it 'lack of quotes in space definition' do
@@ -148,7 +148,7 @@ END
 mode sfa
 F5: b
 END
-      expect { Joyconf.compile(snippet) }.to raise_error
+      expect { Joyconf.new.compile(snippet) }.to raise_error
     end
 
     it 'unrecognized identifier in spaced definition' do
@@ -156,7 +156,7 @@ END
 invalid 'name'
 F5: b
 END
-      expect { Joyconf.compile(snippet) }.to raise_error
+      expect { Joyconf.new.compile(snippet) }.to raise_error
     end
 
     it 'unclosed remap' do
@@ -164,7 +164,7 @@ END
 remap S1 {
 F5: b
 END
-      expect { Joyconf.compile(snippet) }.to raise_error
+      expect { Joyconf.new.compile(snippet) }.to raise_error
     end
 
     it 'extra remap end' do
@@ -175,7 +175,7 @@ remap S2 {
 F5: b
 }
 END
-      expect { Joyconf.compile(snippet) }.to raise_error
+      expect { Joyconf.new.compile(snippet) }.to raise_error
     end
   end
 
@@ -228,6 +228,6 @@ END
       { trigger_name: 'F3', command: 'c' }
     ]
 
-    expect(Joyconf.parse(snippet)).to eq(expected)
+    expect(Joyconf.new.parse(snippet)).to eq(expected)
   end
 end
