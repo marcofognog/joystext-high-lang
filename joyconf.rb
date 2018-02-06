@@ -1,8 +1,6 @@
 class Joyconf
   class UnrecognizedTriggerName < StandardError; end
 
-  attr_accessor :mode_code
-
   VALID_TRIGGER_NAMES = [
     'F1', 'F2','F3', 'F4',
     'A1', 'A2', 'A3', 'A4',
@@ -14,7 +12,7 @@ class Joyconf
     output = []
     next_number = 0
     modes = {}
-    mode_code = 0
+    @mode_code = 0
     remap_key = nil
 
     source.lines.each do |line|
@@ -27,7 +25,7 @@ class Joyconf
 
     tokenize(source.lines).each do |line|
       if line.key?(:mode)
-        mode_code = modes[line[:mode]]
+        @mode_code = modes[line[:mode]]
       elsif line.key?(:remap_begin)
         remap_key = line[:remap_begin]
       elsif line.key?(:remap_end)
@@ -37,13 +35,13 @@ class Joyconf
         cmd = line[:command]
         button = sanitized_button_name(line[:trigger_name])
         cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
-        output << "#{remap_key}:=,#{mode_code}0" if remap_key
-        output << "#{button}:#{cmd},#{mode_code}#{trigger}"
+        output << "#{remap_key}:=,#{@mode_code}0" if remap_key
+        output << "#{button}:#{cmd},#{@mode_code}#{trigger}"
       elsif line.key?(:macro)
         trigger = trigger_code(line[:trigger_name])
         button = sanitized_button_name(line[:trigger_name])
         line[:macro].delete('"').split('').each do |char|
-          output << "#{button}:#{char},#{mode_code}#{trigger}"
+          output << "#{button}:#{char},#{@mode_code}#{trigger}"
         end
       else
         raise 'I dont know what to do'
