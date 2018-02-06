@@ -45,15 +45,7 @@ class Joyconf
     end
 
     parse(source).each do |line|
-      if line.class == Hash
-        if line.key?(:mode)
-          @mode_code = modes[line[:mode]]
-        else
-          raise 'I dont know what to do'
-        end
-      else
-        output << line.build(modes, @mode_code)
-      end
+      output << line.build(modes, @mode_code)
     end
 
     result = output.join("\n")
@@ -65,6 +57,7 @@ class Joyconf
   def parse(source)
     parse_tree = []
     remap_definition = false
+    current_mode = nil
 
     tokenized = tokenize(source.lines)
     tokenized.each do |line|
@@ -73,12 +66,16 @@ class Joyconf
         remap_definition = true
       elsif line.key?(:remap_end)
         remap_definition = false
+      elsif line.key?(:mode)
+        current_mode = line[:mode]
+        parse_tree << Mode.new(line)
       elsif line.key?(:command)
-        if remap_definition
+        if remap_definition || current_mode
           parse_tree.last.nested << Command.new(line)
         else
           parse_tree << Command.new(line)
         end
+
       elsif line.key?(:macro)
         parse_tree << Macro.new(line)
       else
@@ -95,7 +92,7 @@ class Joyconf
 
       if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.delete("'")
-        table << { mode: current_mode }
+        table << { mode: current_mode, nested: [] }
       elsif sanitized.split(' ').first == 'remap'
         table << { remap_begin: sanitized.split(' ')[1], nested: [] }
       elsif sanitized.delete(' ') == '}'
@@ -182,5 +179,19 @@ class Macro
       output << "#{button}:#{char},#{mode_code}#{trigger}"
     end
     output
+  end
+end
+
+class Mode
+  attr_accessor :nested
+
+  def initialize(mode:, nested:)
+    @nested = []
+    @mode = mode
+  end
+
+  def build(modes, mode_code)
+    @mode_code = modes[@mode]
+    nested.map { |n| n.build(modes, @mode_code) }
   end
 end
