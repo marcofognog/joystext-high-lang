@@ -206,4 +206,28 @@ END
     raise 'fails'
   end
 
+  it 'parses in to a tree of definitions' do
+    snippet = <<END
+F1: a
+F2: b
+
+remap S3 {
+  F1:z
+}
+
+F3:c
+END
+    expected = [
+      { trigger_name: 'F1', command: 'a' },
+      { trigger_name: 'F2', command: 'b' },
+      { remap_begin: 'S3', nested: [
+          { trigger_name: 'F1', command: 'z' },
+        ]
+      },
+      { remap_end: '}' },
+      { trigger_name: 'F3', command: 'c' }
+    ]
+
+    expect(Joyconf.parse(snippet)).to eq(expected)
+  end
 end

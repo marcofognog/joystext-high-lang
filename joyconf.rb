@@ -56,6 +56,36 @@ class Joyconf
     return result
   end
 
+  def self.parse(source)
+    parse_tree = []
+    remap_definition = false
+
+    tokenized = tokenize(source.lines)
+    tokenized.each do |line|
+      if line.key?(:mode)
+        mode_code = modes[line[:mode]]
+        parse_tree << line
+      elsif line.key?(:remap_begin)
+        parse_tree << line
+        remap_definition = true
+      elsif line.key?(:remap_end)
+        parse_tree << line
+        remap_definition = false
+      elsif line.key?(:command)
+        if remap_definition
+          parse_tree.last[:nested] << line
+        else
+          parse_tree << line
+        end
+      elsif line.key?(:macro)
+        parse_tree << line
+      else
+        raise 'I dont know what to do'
+      end
+    end
+    parse_tree
+  end
+
   def self.tokenize(lines)
     table = []
     lines.each do |line|
@@ -65,7 +95,7 @@ class Joyconf
         current_mode = line.split(' ').last.delete("'")
         table << { mode: current_mode }
       elsif sanitized.split(' ').first == 'remap'
-        table << { remap_begin: sanitized.split(' ')[1] }
+        table << { remap_begin: sanitized.split(' ')[1], nested: [] }
       elsif sanitized.delete(' ') == '}'
         table << { remap_end: '}' }
       elsif sanitized.delete(' ') == ''
