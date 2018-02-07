@@ -22,63 +22,70 @@ class Joyconf
   class UnrecognizedTriggerName < StandardError; end
   include ParseHelper
 
-  VALID_TRIGGER_NAMES = [
-    'F1', 'F2','F3', 'F4',
-    'A1', 'A2', 'A3', 'A4',
-    'S1', 'S2', 'S3', 'S4',
-    'start', 'select'
+  VALID_TRIGGER_NAMES = %w[
+    F1 F2 F3 F4
+    A1 A2 A3 A4
+    S1 S2 S3 S4
+    start select
   ].freeze
 
   def compile(source)
     output = []
-    next_number = 0
-    modes = {}
-    @mode_code = 0
+    mode_code = 0
 
-    source.lines.each do |line|
-      if line.split(' ').first == 'mode'
-        mode_name = line.split(' ').last.delete("'")
-        modes[mode_name] = next_number
-        next_number += 1
-      end
-    end
+    modes = discover_modes(source.lines)
 
-    parse(source).each do |line|
-      output << line.build(modes, @mode_code)
+    abstract_syntax_tree = parse(source)
+    abstract_syntax_tree.each do |node|
+      output << node.build(modes, mode_code)
     end
 
     result = output.join("\n")
     result << "\n"
   end
 
+  def discover_modes(lines)
+    modes = {}
+    count = 0
+
+    lines.each do |line|
+      if line.split(' ').first == 'mode'
+        mode_name = line.split(' ').last.delete("'")
+        modes[mode_name] = count
+        count += 1
+      end
+    end
+
+    modes
+  end
+
   def parse(source)
-    parse_tree = []
+    ast = []
     remap_definition = false
     current_mode = nil
 
-    tokenized = tokenize(source.lines)
-    tokenized.each do |line|
+    tokenize(source.lines).each do |line|
       if line.key?(:remap_begin)
-        parse_tree << Remap.new(line)
+        ast << Remap.new(line)
         remap_definition = true
       elsif line.key?(:remap_end)
         remap_definition = false
       elsif line.key?(:mode)
         current_mode = line[:mode]
-        parse_tree << Mode.new(line)
+        ast << Mode.new(line)
       elsif line.key?(:command)
         if remap_definition || current_mode
-          parse_tree.last.nested << Command.new(line)
+          ast.last.nested << Command.new(line)
         else
-          parse_tree << Command.new(line)
+          ast << Command.new(line)
         end
       elsif line.key?(:macro)
-        parse_tree << Macro.new(line)
+        ast << Macro.new(line)
       else
-        parse_tree << line
+        ast << line
       end
     end
-    parse_tree
+    ast
   end
 
   def tokenize(lines)
@@ -97,21 +104,14 @@ class Joyconf
       else
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
-        cmd = splitted[1].delete("\n").delete(' ')
-
         check_valid_trigger_name(button_name)
 
+        cmd = splitted[1].delete("\n").delete(' ')
         table << if quoted?(cmd)
-            {
-            trigger_name: button_name,
-            macro: cmd
-          }
-        else
-          {
-            trigger_name: button_name,
-            command: cmd
-          }
-        end
+                   { trigger_name: button_name, macro: cmd }
+                 else
+                   { trigger_name: button_name, command: cmd }
+                 end
       end
     end
     table
@@ -167,7 +167,7 @@ class Macro
     @macro = macro
   end
 
-  def build(modes, mode_code)
+  def build(_, mode_code)
     output = []
     trigger = trigger_code(@trigger)
     button = sanitized_button_name(@trigger)
