@@ -27,14 +27,13 @@ class Joyconf
     'A1', 'A2', 'A3', 'A4',
     'S1', 'S2', 'S3', 'S4',
     'start', 'select'
-  ]
+  ].freeze
 
   def compile(source)
     output = []
     next_number = 0
     modes = {}
     @mode_code = 0
-    remap_key = nil
 
     source.lines.each do |line|
       if line.split(' ').first == 'mode'
@@ -50,8 +49,6 @@ class Joyconf
 
     result = output.join("\n")
     result << "\n"
-
-    return result
   end
 
   def parse(source)
@@ -75,7 +72,6 @@ class Joyconf
         else
           parse_tree << Command.new(line)
         end
-
       elsif line.key?(:macro)
         parse_tree << Macro.new(line)
       else
@@ -92,9 +88,9 @@ class Joyconf
 
       if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.delete("'")
-        table << { mode: current_mode, nested: [] }
+        table << { mode: current_mode }
       elsif sanitized.split(' ').first == 'remap'
-        table << { remap_begin: sanitized.split(' ')[1], nested: [] }
+        table << { remap_begin: sanitized.split(' ')[1] }
       elsif sanitized.delete(' ') == '}'
         table << { remap_end: '}' }
       elsif sanitized.delete(' ') == ''
@@ -105,13 +101,13 @@ class Joyconf
 
         check_valid_trigger_name(button_name)
 
-        if quoted?(cmd)
-          table << {
+        table << if quoted?(cmd)
+            {
             trigger_name: button_name,
             macro: cmd
           }
         else
-          table << {
+          {
             trigger_name: button_name,
             command: cmd
           }
@@ -134,12 +130,12 @@ end
 class Remap
   attr_accessor :nested
 
-  def initialize(remap_begin:, nested:)
+  def initialize(remap_begin:)
     @nested = []
     @trigger = remap_begin
   end
 
-  def build(modes, mode_code=nil)
+  def build(modes, mode_code = nil)
     nested.map { |n| n.build(modes, mode_code, @trigger) }
   end
 end
@@ -152,7 +148,7 @@ class Command
     @command = command
   end
 
-  def build(modes, mode=nil, remap_trigger=nil)
+  def build(modes, mode = nil, remap_trigger = nil)
     out = []
     button = sanitized_button_name(@trigger)
     cmd = @command
@@ -185,12 +181,12 @@ end
 class Mode
   attr_accessor :nested
 
-  def initialize(mode:, nested:)
+  def initialize(mode:)
     @nested = []
     @mode = mode
   end
 
-  def build(modes, mode_code)
+  def build(modes, _)
     @mode_code = modes[@mode]
     nested.map { |n| n.build(modes, @mode_code) }
   end
