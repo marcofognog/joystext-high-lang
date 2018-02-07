@@ -1,22 +1,8 @@
-module ParseHelper
-  def sanitized_button_name(name)
-    name.delete('.').delete('<').delete('>').delete('*')
-  end
-
-  def build_switch_mode(cmd, modes)
-    name_position = cmd =~ /\'.*?\'/
-    mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
-    "switch_to_mode#{modes[mode_name]}"
-  end
-
-  def trigger_code(button_name)
-    return '1' if button_name =~ /\./
-    return '4' if button_name =~ /\</
-    return '3' if button_name =~ /\>/
-    return '2' if button_name =~ /\*/
-    return '0'
-  end
-end
+require 'parse_helper'
+require 'nodes/macro'
+require 'nodes/remap'
+require 'nodes/command'
+require 'nodes/mode'
 
 class Joyconf
   class UnrecognizedTriggerName < StandardError; end
@@ -124,70 +110,5 @@ class Joyconf
 
   def quoted?(cmd)
     cmd =~ /"(.*?)"/
-  end
-end
-
-class Remap
-  attr_accessor :nested
-
-  def initialize(remap_begin:)
-    @nested = []
-    @trigger = remap_begin
-  end
-
-  def build(modes, mode_code)
-    nested.map { |n| n.build(modes, mode_code, @trigger) }
-  end
-end
-
-class Command
-  include ParseHelper
-
-  def initialize(trigger_name:, command:)
-    @trigger = trigger_name
-    @command = command
-  end
-
-  def build(modes, mode, remap_trigger = nil)
-    out = []
-    button = sanitized_button_name(@trigger)
-    cmd = @command
-    cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
-    out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
-    out << "#{button}:#{cmd},#{mode}#{trigger_code(@trigger)}"
-    out.join("\n")
-  end
-end
-
-class Macro
-  include ParseHelper
-
-  def initialize(trigger_name:, macro:)
-    @trigger = trigger_name
-    @macro = macro
-  end
-
-  def build(_, mode_code)
-    output = []
-    trigger = trigger_code(@trigger)
-    button = sanitized_button_name(@trigger)
-    @macro.delete('"').split('').each do |char|
-      output << "#{button}:#{char},#{mode_code}#{trigger}"
-    end
-    output
-  end
-end
-
-class Mode
-  attr_accessor :nested
-
-  def initialize(mode:)
-    @nested = []
-    @mode = mode
-  end
-
-  def build(modes, _)
-    @mode_code = modes[@mode]
-    nested.map { |n| n.build(modes, @mode_code) }
   end
 end
