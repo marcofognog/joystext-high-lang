@@ -1,0 +1,16 @@
+mode 'navegation'
+
+S3:enter
+
+.A1:mouse_up
+.A3:mouse_down
+.A2:mouse_right
+.A4:mouse_left
+
+>F1:click_left
+<F1:unclick_left
+
+.F1:set_mouse_step_5
+.F2:set_mouse_step_15
+.F3:set_mouse_step_25
+.F4:set_mouse_step_45
