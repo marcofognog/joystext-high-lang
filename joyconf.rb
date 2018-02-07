@@ -135,7 +135,7 @@ class Remap
     @trigger = remap_begin
   end
 
-  def build(modes, mode_code = nil)
+  def build(modes, mode_code)
     nested.map { |n| n.build(modes, mode_code, @trigger) }
   end
 end
@@ -148,7 +148,7 @@ class Command
     @command = command
   end
 
-  def build(modes, mode = nil, remap_trigger = nil)
+  def build(modes, mode, remap_trigger = nil)
     out = []
     button = sanitized_button_name(@trigger)
     cmd = @command
