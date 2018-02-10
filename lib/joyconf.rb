@@ -66,7 +66,11 @@ class Joyconf
           ast << Command.new(line)
         end
       elsif line.key?(:macro)
-        ast << Macro.new(line)
+        if remap_definition || current_mode
+          ast.last.nested << Macro.new(line)
+        else
+          ast << Macro.new(line)
+        end
       else
         ast << line
       end

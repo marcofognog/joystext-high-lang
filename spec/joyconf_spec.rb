@@ -181,7 +181,7 @@ END
 
   it 'defines macros inside remaps' do
     snippet = <<END
-remaps S1 {
+remap S1 {
   F1: "thanks"
   F2: b
 }
@@ -202,7 +202,6 @@ F1:s,00
 S1:=,00
 F2:b,00
 END
-    pending 'to be implemented'
-    raise 'fails'
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 end
