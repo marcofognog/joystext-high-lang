@@ -1,7 +1,7 @@
 $LOAD_PATH << '.'
 
 Bundler.require
-require 'joyconf'
+require 'lib/joyconf'
 
 filename = ARGV[0]
 puts Joyconf.new.compile File.open(filename).read
