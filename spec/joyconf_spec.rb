@@ -128,7 +128,7 @@ END
 
   it 'throws error for unrecognized triggers' do
     snippet = <<END
-F1: "thanks"
+F1+F2: "thanks"
 F5: b
 END
     expect do

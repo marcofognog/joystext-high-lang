@@ -120,9 +120,11 @@ class Joyconf
   def check_valid_trigger_name(name, line)
     pure = sanitized_button_name(name)
     line_offset = 1
-    unless VALID_TRIGGER_NAMES.include?(pure)
-      error_msg = "Syntax error on line #{line + line_offset}:"
-      raise UnrecognizedTriggerName, error_msg
+    pure.split('+').each do |trigger_name|
+      unless VALID_TRIGGER_NAMES.include?(trigger_name)
+        error_msg = "Syntax error on line #{line + line_offset}:"
+        raise UnrecognizedTriggerName, error_msg
+      end
     end
   end
 
