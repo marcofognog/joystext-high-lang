@@ -87,7 +87,7 @@ class Joyconf
 
       if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.delete("'")
-        if sanitized.split(' ').count == 1 || current_mode == ''
+        unless sanitized =~ /mode\s'.+'/
           raise UnnamedMode, "I need a name for the mode on line #{line_num + 1}"
         else
           table << { mode: current_mode }
