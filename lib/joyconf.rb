@@ -98,7 +98,7 @@ class Joyconf
         table << { remap_end: '}' }
       elsif sanitized.delete(' ') == ''
       else
-        if sanitized =~ /(F(1|2|3|4)|A(1|2|3|4))\:.+/
+        if sanitized =~ /.+\:.+/
           splitted = sanitized.split(':')
           button_name = splitted[0].delete(' ')
           check_valid_trigger_name(button_name, line_num)
