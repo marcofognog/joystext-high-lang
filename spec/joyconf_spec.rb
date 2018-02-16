@@ -150,7 +150,7 @@ END
     it 'mode with empty quotes' do
       snippet = <<END
 mode ''
-F5: b
+F4: b
 END
       expect do
         Joyconf.new.compile(snippet)
