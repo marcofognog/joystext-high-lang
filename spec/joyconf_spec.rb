@@ -142,7 +142,19 @@ END
 mode
 F5: b
 END
-      expect { Joyconf.new.compile(snippet) }.to raise_error
+      expect do
+        Joyconf.new.compile(snippet)
+      end.to raise_error Joyconf::UnnamedMode
+    end
+
+    it 'mode with empty quotes' do
+      snippet = <<END
+mode ''
+F5: b
+END
+      expect do
+        Joyconf.new.compile(snippet)
+      end.to raise_error Joyconf::UnnamedMode
     end
 
     it 'lack of quotes in space definition' do

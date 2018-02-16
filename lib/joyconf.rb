@@ -6,6 +6,8 @@ require 'lib/nodes/mode'
 
 class Joyconf
   class UnrecognizedTriggerName < StandardError; end
+  class UnnamedMode < StandardError; end
+
   include ParseHelper
 
   VALID_TRIGGER_NAMES = %w[
@@ -85,7 +87,11 @@ class Joyconf
 
       if sanitized.split(' ').first == 'mode'
         current_mode = line.split(' ').last.delete("'")
-        table << { mode: current_mode }
+        if sanitized.split(' ').count == 1 || current_mode == ''
+          raise UnnamedMode, "I need a name for the mode on line #{line_num + 1}"
+        else
+          table << { mode: current_mode }
+        end
       elsif sanitized.split(' ').first == 'remap'
         table << { remap_begin: sanitized.split(' ')[1] }
       elsif sanitized.delete(' ') == '}'
