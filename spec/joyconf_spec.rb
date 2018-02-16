@@ -188,7 +188,9 @@ END
 mode sfa
 F5: b
 END
-      expect { Joyconf.new.compile(snippet) }.to raise_error
+      expect do
+        Joyconf.new.compile(snippet)
+      end.to raise_error Joyconf::UnnamedMode
     end
 
     it 'unrecognized identifier in spaced definition' do
