@@ -198,7 +198,9 @@ END
 invalid 'name'
 F5: b
 END
-      expect { Joyconf.new.compile(snippet) }.to raise_error
+      expect do
+        Joyconf.new.compile(snippet)
+      end.to raise_error Joyconf::UnrecognizedDefinition
     end
 
     it 'unclosed remap' do

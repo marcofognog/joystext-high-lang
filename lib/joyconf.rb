@@ -7,7 +7,7 @@ require 'lib/nodes/mode'
 class Joyconf
   class UnrecognizedTriggerName < StandardError; end
   class UnnamedMode < StandardError; end
-
+  class UnrecognizedDefinition < StandardError; end
   include ParseHelper
 
   VALID_TRIGGER_NAMES = %w[
@@ -98,16 +98,20 @@ class Joyconf
         table << { remap_end: '}' }
       elsif sanitized.delete(' ') == ''
       else
-        splitted = sanitized.split(':')
-        button_name = splitted[0].delete(' ')
-        check_valid_trigger_name(button_name, line_num)
+        if sanitized =~ /(F(1|2|3|4)|A(1|2|3|4))\:.+/
+          splitted = sanitized.split(':')
+          button_name = splitted[0].delete(' ')
+          check_valid_trigger_name(button_name, line_num)
 
-        cmd = splitted[1].delete("\n").delete(' ')
-        table << if quoted?(cmd)
-                   { trigger_name: button_name, macro: cmd }
-                 else
-                   { trigger_name: button_name, command: cmd }
-                 end
+          cmd = splitted[1].delete("\n").delete(' ')
+          table << if quoted?(cmd)
+                     { trigger_name: button_name, macro: cmd }
+                   else
+                     { trigger_name: button_name, command: cmd }
+                   end
+        else
+          raise UnrecognizedDefinition, "Sintax error in line #{line_num + 1}"
+        end
       end
     end
     table
