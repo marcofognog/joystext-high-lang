@@ -136,6 +136,32 @@ END
     end.to raise_error Joyconf::UnrecognizedTriggerName, /Syntax error on line 2/
   end
 
+  it 'defines macros inside remaps' do
+    snippet = <<END
+remap S1 {
+  F1: "thanks"
+  F2: b
+}
+END
+    expected = <<END
+S1:=,00
+F1:t,00
+S1:=,00
+F1:h,00
+S1:=,00
+F1:a,00
+S1:=,00
+F1:n,00
+S1:=,00
+F1:k,00
+S1:=,00
+F1:s,00
+S1:=,00
+F2:b,00
+END
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
+  end
+
   context 'throws error for unrecognized definitions' do
     it 'incomplete defintion' do
       snippet = <<END
@@ -193,29 +219,4 @@ END
     end
   end
 
-  it 'defines macros inside remaps' do
-    snippet = <<END
-remap S1 {
-  F1: "thanks"
-  F2: b
-}
-END
-    expected = <<END
-S1:=,00
-F1:t,00
-S1:=,00
-F1:h,00
-S1:=,00
-F1:a,00
-S1:=,00
-F1:n,00
-S1:=,00
-F1:k,00
-S1:=,00
-F1:s,00
-S1:=,00
-F2:b,00
-END
-    expect(Joyconf.new.compile(snippet)).to eq(expected)
-  end
 end
