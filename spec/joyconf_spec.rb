@@ -131,7 +131,9 @@ END
 F1: "thanks"
 F5: b
 END
-    expect { Joyconf.new.compile(snippet) }.to raise_error
+    expect do
+      Joyconf.new.compile(snippet)
+    end.to raise_error Joyconf::UnrecognizedTriggerName, /Syntax error on line 2/
   end
 
   context 'throws error for unrecognized definitions' do

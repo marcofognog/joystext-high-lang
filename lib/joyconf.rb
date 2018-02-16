@@ -80,7 +80,7 @@ class Joyconf
 
   def tokenize(lines)
     table = []
-    lines.each do |line|
+    lines.each_with_index do |line, line_num|
       sanitized = line.split('#').first.delete("\n")
 
       if sanitized.split(' ').first == 'mode'
@@ -94,7 +94,7 @@ class Joyconf
       else
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
-        check_valid_trigger_name(button_name)
+        check_valid_trigger_name(button_name, line_num)
 
         cmd = splitted[1].delete("\n").delete(' ')
         table << if quoted?(cmd)
@@ -107,9 +107,13 @@ class Joyconf
     table
   end
 
-  def check_valid_trigger_name(name)
+  def check_valid_trigger_name(name, line)
     pure = sanitized_button_name(name)
-    raise UnrecognizedTriggerName unless VALID_TRIGGER_NAMES.include?(pure)
+    line_offset = 1
+    unless VALID_TRIGGER_NAMES.include?(pure)
+      error_msg = "Syntax error on line #{line + line_offset}:"
+      raise UnrecognizedTriggerName, error_msg
+    end
   end
 
   def quoted?(cmd)
