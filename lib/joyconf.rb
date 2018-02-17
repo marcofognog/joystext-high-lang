@@ -69,7 +69,6 @@ class Joyconf
       elsif line.key?(:command)
         if current_mode
           if remap_definition
-            puts ast.inspect
             ast.last.nested.last.nested << Command.new(line)
           else
             ast.last.nested << Command.new(line)
