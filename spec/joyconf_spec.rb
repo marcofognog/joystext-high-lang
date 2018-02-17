@@ -221,6 +221,15 @@ END
       end.to raise_error Joyconf::UnrecognizedDefinition
     end
 
+    it 'raise error when switch_to_mode doenst have a target' do
+      snippet = <<END
+F1: switch_to_mode
+END
+      expect do
+        Joyconf.new.compile(snippet)
+      end.to raise_error Joyconf::SwitchModeWithoutTarget, /Syntax error/
+    end
+
     it 'unclosed remap' do
       snippet = <<END
 remap S1 {

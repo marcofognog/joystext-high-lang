@@ -5,7 +5,8 @@ module ParseHelper
 
   def build_switch_mode(cmd, modes)
     name_position = cmd =~ /\'.*?\'/
-    raise 'Syntax error: switch_mode needs a taget' if name_position.nil?
+    raise Joyconf::SwitchModeWithoutTarget,
+          'Syntax error: switch_mode needs a taget' if name_position.nil?
     mode_name = cmd[(name_position + 1)..(cmd.length - 2)]
     "switch_to_mode#{modes[mode_name]}"
   end

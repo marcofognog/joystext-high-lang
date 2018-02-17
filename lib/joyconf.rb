@@ -8,6 +8,7 @@ class Joyconf
   class UnrecognizedTriggerName < StandardError; end
   class UnnamedMode < StandardError; end
   class UnrecognizedDefinition < StandardError; end
+  class SwitchModeWithoutTarget < StandardError; end
   include ParseHelper
 
   VALID_TRIGGER_NAMES = %w[
