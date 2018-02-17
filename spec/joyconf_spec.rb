@@ -97,6 +97,24 @@ END
     expect(Joyconf.new.compile(snippet)).to eq(expected)
   end
 
+  it 'remaps buttons, play nice with mode definition' do
+    snippet = <<END
+mode 'text'
+
+remap S3 {
+  A1:a
+}
+
+A4:c
+END
+    expected = <<END
+S3:=,00
+A1:a,00
+A4:c,00
+END
+    expect(Joyconf.new.compile(snippet)).to eq(expected)
+  end
+
   it 'deals well with spaces' do
     snippet = <<END
 F1: shift + a
