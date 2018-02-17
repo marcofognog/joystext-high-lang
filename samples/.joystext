@@ -1,7 +1,7 @@
 mode 'text'
 
 start:switch_to_mode 'navegation'
-S1+S3:switch_to_mode 'macros'
+S1+S4:switch_to_mode 'macros'
 
 F1:a
 F2:e
@@ -251,7 +251,7 @@ A4+A3+F2:ctrl+zero
 
 select:switch_to_mode 'text'
 start:switch_to_mode 'navegation'
-S1+S3:switch_to_mode 'macros'
+S1+S4:switch_to_mode 'macros'
 
 mode 'macros'
 
