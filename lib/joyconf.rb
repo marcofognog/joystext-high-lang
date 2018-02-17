@@ -54,16 +54,26 @@ class Joyconf
 
     tokenize(source.lines).each do |line|
       if line.key?(:remap_begin)
-        ast << Remap.new(line)
-        remap_definition = true
+        if current_mode
+          ast.last.nested << Remap.new(line)
+          remap_definition = true
+        else
+          ast << Remap.new(line)
+          remap_definition = true
+        end
       elsif line.key?(:remap_end)
         remap_definition = false
       elsif line.key?(:mode)
         current_mode = line[:mode]
         ast << Mode.new(line)
       elsif line.key?(:command)
-        if remap_definition || current_mode
-          ast.last.nested << Command.new(line)
+        if current_mode
+          if remap_definition
+            puts ast.inspect
+            ast.last.nested.last.nested << Command.new(line)
+          else
+            ast.last.nested << Command.new(line)
+          end
         else
           ast << Command.new(line)
         end
