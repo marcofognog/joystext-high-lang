@@ -1,6 +1,7 @@
 mode 'text'
 
-select:switch_to_mode 'navegation'
+start:switch_to_mode 'navegation'
+S1+S3:switch_to_mode 'macros'
 
 F1:a
 F2:e
@@ -167,7 +168,8 @@ S1+S2+A4+A3+F2:ctrl+zero
 
 mode 'navegation'
 
-start:switch_to_mode 'text'
+select:switch_to_mode 'text'
+S1+S3:switch_to_mode 'macros'
 
 S3:enter
 
@@ -208,23 +210,6 @@ remap S4 {
   *F3:super+l
 }
 
-S3+S4:switch_to_mode 'google maps'
-
-mode 'google maps'
-
->F1:click_left
-<F1:unclick_left
-.F2:set_mouse_step_15
-.F3:set_mouse_step_25
-.F4:set_mouse_step_45
-.A1:scroll_up
-.A3:scroll_down
-.A2:mouse_right
-.A4:mouse_left
-S3+S4:switch_to_mode 'text'
-start:switch_to_mode 'text'
-select:switch_to_mode 'navegation'
-
 mode 'ctrl'
 
 F1:ctrl+a
@@ -264,13 +249,14 @@ A3+A2+F4:ctrl+eight
 A4+A3+F1:ctrl+nine
 A4+A3+F2:ctrl+zero
 
-start:switch_to_mode 'text'
-select:switch_to_mode 'navegation'
+select:switch_to_mode 'text'
+start:switch_to_mode 'navegation'
 S1+S3:switch_to_mode 'macros'
 
 mode 'macros'
 
-F1: "git s", switch_to_mode 'text'
-F2: "git d", switch_to_mode 'text'
+F1: "obrigado"
+F2: "por favor"
+
 start:switch_to_mode 'navegation'
 select:switch_to_mode 'text'
