@@ -127,7 +127,7 @@ remap S4 {
 S4+A3:super+shift+q
 S4+F1:super+d
 S4+A1+F1:ctrl+shift+t
-S1+S3:switch_to_mode3
+S1+S3:switch_to_mode 'ctrl'
 S1+S2+F1:ctrl+a
 S1+S2+F2:ctrl+e
 S1+S2+F3:ctrl+i
