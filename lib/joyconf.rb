@@ -68,18 +68,12 @@ class Joyconf
         current_mode = line[:mode]
         ast << Mode.new(line)
       elsif line.key?(:command)
-        if current_mode
-          if remap_definition
-            ast.last.nested.last.nested << Command.new(line)
-          else
-            ast.last.nested << Command.new(line)
-          end
+        if current_mode && remap_definition
+          ast.last.nested.last.nested << Command.new(line)
+        elsif current_mode || remap_definition
+          ast.last.nested << Command.new(line)
         else
-          if remap_definition
-            ast.last.nested << Command.new(line)
-          else
-            ast << Command.new(line)
-          end
+          ast << Command.new(line)
         end
       elsif line.key?(:macro)
         if remap_definition || current_mode
