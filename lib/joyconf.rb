@@ -82,35 +82,35 @@ class Joyconf
   end
 
   def tokenize(lines)
-    table = []
+    tokenized = []
     lines.each_with_index do |line, line_num|
       sanitized = line.split('#').first.delete("\n")
 
       if mode_definition?(sanitized)
         if sanitized =~ /mode\s'.+'/
           current_mode = sanitized.split(' ').last.delete("'")
-          table << { mode: current_mode }
+          tokenized << { mode: current_mode }
         else
           raise UnnamedMode,
                 "I need a name for the mode on line #{line_num + 1}"
         end
       elsif open_remap_definition?(sanitized)
-        table << { remap_begin: sanitized.split(' ')[1] }
+        tokenized << { remap_begin: sanitized.split(' ')[1] }
       elsif close_remap_definition?(sanitized)
-        table << { remap_end: '}' }
+        tokenized << { remap_end: '}' }
       elsif command_definition?(sanitized)
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
         check_valid_trigger_name(button_name, line_num)
 
         cmd = splitted[1].delete(' ')
-        table << { trigger_name: button_name, command: cmd }
+        tokenized << { trigger_name: button_name, command: cmd }
       elsif empty_line?(sanitized)
       else
         raise UnrecognizedDefinition, "Syntax error in line #{line_num + 1}"
       end
     end
-    table
+    tokenized
   end
 
   def mode_definition?(sanitized)
