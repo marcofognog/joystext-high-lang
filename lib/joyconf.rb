@@ -1,5 +1,4 @@
 require 'lib/parse_helper'
-require 'lib/nodes/macro'
 require 'lib/nodes/remap'
 require 'lib/nodes/command'
 require 'lib/nodes/mode'
