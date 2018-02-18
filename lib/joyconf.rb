@@ -93,19 +93,19 @@ class Joyconf
     lines.each_with_index do |line, line_num|
       sanitized = line.split('#').first.delete("\n")
 
-      if sanitized.split(' ').first == 'mode'
-        current_mode = line.split(' ').last.delete("'")
+      if mode_definition?(sanitized)
+        current_mode = sanitized.split(' ').last.delete("'")
         unless sanitized =~ /mode\s'.+'/
           raise UnnamedMode, "I need a name for the mode on line #{line_num + 1}"
         else
           table << { mode: current_mode }
         end
-      elsif sanitized.split(' ').first == 'remap'
+      elsif open_remap_definition?(sanitized)
         table << { remap_begin: sanitized.split(' ')[1] }
-      elsif sanitized.delete(' ') == '}'
+      elsif close_remap_definition?(sanitized)
         table << { remap_end: '}' }
-      elsif sanitized.delete(' ') == ''
-      elsif sanitized =~ /.+\:.+/
+      elsif empty_line?(sanitized)
+      elsif command_definition?(sanitized)
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
         check_valid_trigger_name(button_name, line_num)
@@ -121,6 +121,26 @@ class Joyconf
       end
     end
     table
+  end
+
+  def mode_definition?(sanitized)
+    sanitized.split(' ').first == 'mode'
+  end
+
+  def open_remap_definition?(sanitized)
+    sanitized.split(' ').first == 'remap'
+  end
+
+  def close_remap_definition?(sanitized)
+    sanitized.delete(' ') == '}'
+  end
+
+  def empty_line?(sanitized)
+    sanitized.delete(' ') == ''
+  end
+
+  def command_definition?(sanitized)
+    sanitized =~ /.+\:.+/
   end
 
   def check_valid_trigger_name(name, line)
