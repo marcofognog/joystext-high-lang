@@ -75,14 +75,8 @@ class Joyconf
         else
           ast << Command.new(line)
         end
-      elsif line.key?(:macro)
-        if remap_definition || current_mode
-          ast.last.nested << Macro.new(line)
-        else
-          ast << Macro.new(line)
-        end
       else
-        ast << line
+        ast << line # remove this?
       end
     end
     ast
@@ -111,11 +105,7 @@ class Joyconf
         check_valid_trigger_name(button_name, line_num)
 
         cmd = splitted[1].delete("\n").delete(' ')
-        table << if quoted?(cmd)
-                   { trigger_name: button_name, macro: cmd }
-                 else
-                   { trigger_name: button_name, command: cmd }
-                 end
+        table << { trigger_name: button_name, command: cmd }
       else
         raise UnrecognizedDefinition, "Sintax error in line #{line_num + 1}"
       end
@@ -152,9 +142,5 @@ class Joyconf
         raise UnrecognizedTriggerName, error_msg
       end
     end
-  end
-
-  def quoted?(cmd)
-    cmd =~ /"(.*?)"/
   end
 end

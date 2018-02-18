@@ -10,10 +10,22 @@ class Command
     out = []
     button = sanitized_button_name(@trigger)
     cmd = @command
-    cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
-    out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
-    out << "#{button}:#{cmd},#{mode}#{trigger_code(@trigger)}"
+    if quoted?(cmd)
+      cmd.delete('"').split('').each do |char|
+        out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
+        out << "#{button}:#{char},#{mode}#{trigger_code(@trigger)}"
+      end
+    else
+      cmd = build_switch_mode(cmd, modes) if cmd =~ /switch_to_mode/
+      out << "#{remap_trigger}:=,#{mode}0" if remap_trigger
+      out << "#{button}:#{cmd},#{mode}#{trigger_code(@trigger)}"
+    end
+
     out.join("\n")
+  end
+
+  def quoted?(cmd)
+    cmd =~ /"(.*?)"/
   end
 end
 
