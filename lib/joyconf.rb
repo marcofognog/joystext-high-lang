@@ -105,21 +105,19 @@ class Joyconf
       elsif sanitized.delete(' ') == '}'
         table << { remap_end: '}' }
       elsif sanitized.delete(' ') == ''
-      else
-        if sanitized =~ /.+\:.+/
-          splitted = sanitized.split(':')
-          button_name = splitted[0].delete(' ')
-          check_valid_trigger_name(button_name, line_num)
+      elsif sanitized =~ /.+\:.+/
+        splitted = sanitized.split(':')
+        button_name = splitted[0].delete(' ')
+        check_valid_trigger_name(button_name, line_num)
 
-          cmd = splitted[1].delete("\n").delete(' ')
-          table << if quoted?(cmd)
-                     { trigger_name: button_name, macro: cmd }
-                   else
-                     { trigger_name: button_name, command: cmd }
-                   end
-        else
-          raise UnrecognizedDefinition, "Sintax error in line #{line_num + 1}"
-        end
+        cmd = splitted[1].delete("\n").delete(' ')
+        table << if quoted?(cmd)
+                   { trigger_name: button_name, macro: cmd }
+                 else
+                   { trigger_name: button_name, command: cmd }
+                 end
+      else
+        raise UnrecognizedDefinition, "Sintax error in line #{line_num + 1}"
       end
     end
     table
