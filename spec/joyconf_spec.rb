@@ -32,7 +32,7 @@ select:b,00
 F2:c,01
 END
     expect(Joyconf.new.compile(snippet)).to eq(expected)
-end
+  end
 
   it 'controls the modes' do
     snippet = <<END
