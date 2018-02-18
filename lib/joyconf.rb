@@ -8,6 +8,7 @@ class Joyconf
   class UnnamedMode < StandardError; end
   class UnrecognizedDefinition < StandardError; end
   class SwitchModeWithoutTarget < StandardError; end
+
   include ParseHelper
 
   VALID_TRIGGER_NAMES = %w[
@@ -56,11 +57,10 @@ class Joyconf
       if line.key?(:remap_begin)
         if current_mode
           ast.last.nested << Remap.new(line)
-          remap_definition = true
         else
           ast << Remap.new(line)
-          remap_definition = true
         end
+        remap_definition = true
       elsif line.key?(:remap_end)
         remap_definition = false
       elsif line.key?(:mode)
@@ -87,26 +87,27 @@ class Joyconf
       sanitized = line.split('#').first.delete("\n")
 
       if mode_definition?(sanitized)
-        current_mode = sanitized.split(' ').last.delete("'")
-        unless sanitized =~ /mode\s'.+'/
-          raise UnnamedMode, "I need a name for the mode on line #{line_num + 1}"
-        else
+        if sanitized =~ /mode\s'.+'/
+          current_mode = sanitized.split(' ').last.delete("'")
           table << { mode: current_mode }
+        else
+          raise UnnamedMode,
+                "I need a name for the mode on line #{line_num + 1}"
         end
       elsif open_remap_definition?(sanitized)
         table << { remap_begin: sanitized.split(' ')[1] }
       elsif close_remap_definition?(sanitized)
         table << { remap_end: '}' }
-      elsif empty_line?(sanitized)
       elsif command_definition?(sanitized)
         splitted = sanitized.split(':')
         button_name = splitted[0].delete(' ')
         check_valid_trigger_name(button_name, line_num)
 
-        cmd = splitted[1].delete("\n").delete(' ')
+        cmd = splitted[1].delete(' ')
         table << { trigger_name: button_name, command: cmd }
+      elsif empty_line?(sanitized)
       else
-        raise UnrecognizedDefinition, "Sintax error in line #{line_num + 1}"
+        raise UnrecognizedDefinition, "Syntax error in line #{line_num + 1}"
       end
     end
     table
